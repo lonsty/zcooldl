@@ -34,7 +34,7 @@ Features
 * 异常重试：只要重试次数足够多，就没有下载不下来的图片 \(^o^)/！
 * 增量下载：设计师/用户有新的上传，再跑一遍程序就行了 O(∩_∩)O 嗯！
 * 自选主题：可以选择下载用户的特定主题，而不是该用户下的所有内容
-* 超清原图：默认下载超清原图（约几 MB），使用参数 `--thumbnail` 下载缩略图（宽最大 1280px，约 500KB）
+* 下载收藏夹 `New`：使用 `-c <收藏夹 URL, ...>` 下载收藏夹中的作品（收藏夹可自由创建）
 
 Quickstart
 ----------
@@ -43,7 +43,7 @@ Install zcooldl via pip:
 
 .. code-block:: console
 
-    $ pip install zcooldl
+    $ pip install -U zcooldl
 
 Download all username's pictures to current directory:
 

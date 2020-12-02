@@ -6,6 +6,7 @@ import random
 import time
 from collections import namedtuple
 from functools import wraps
+from typing import Iterable
 
 
 def retry(exceptions, tries=3, delay=1, backoff=2, logger=None):
@@ -53,7 +54,7 @@ def mkdirs_if_not_exist(dir):
             pass
 
 
-def convert_to_safe_filename(filename):
+def safe_filename(filename):
     """去掉文件名中的非法字符。
 
     :param str filename: 文件名
@@ -62,19 +63,35 @@ def convert_to_safe_filename(filename):
     return "".join([c for c in filename if c not in r'\/:*?"<>|']).strip()
 
 
-def parse_users(ids, names):
+def parse_resources(ids, names, collections):
     """解析用户名或 ID。
 
     :param str ids: 半角逗号分隔的用户 ID
     :param str names: 半角逗号分隔的用户名
     :return list: 包含 User 数据的列表
     """
-    User = namedtuple('User', 'id name')
-    users = []
-
-    if names:
-        users = [User(None, name) for name in names.split(',')]
+    Resource = namedtuple('Resource', 'id name collection')
+    resources = []
+    if collections:
+        resources = [Resource(None, None, collection) for collection in collections.split(',')]
+    elif names:
+        resources = [Resource(None, name, None) for name in names.split(',')]
     elif ids:
-        users = [User(uid, None) for uid in ids.split(',')]
+        resources = [Resource(uid, None, None) for uid in ids.split(',')]
+    return resources  # TODO: 去重
 
-    return users
+
+def sort_records(records: Iterable, order: dict):
+    """根据自定义的排序规则排序
+
+    :param Iterable records: 要排序的记录
+    :param dict order: 自定义的排序
+    :return:
+    """
+
+    def _order_by(obj: namedtuple):
+        if obj.type == 'topic':
+            return (order[obj.type], obj.index, obj.objid, obj.title, obj.url)
+        return (order[obj.type], obj.objid, obj.index, obj.title, obj.url)
+
+    return sorted(records, key=_order_by)
